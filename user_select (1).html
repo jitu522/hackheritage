@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable Management System</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Color variables with blueish-purple theme */
+        :root {
+            --clr-primary: #7B68EE;
+            --clr-primary-light: #a296f1;
+            --clr-primary-dark: #6A5ACD;
+            --clr-secondary: #6C5CE7;
+            --clr-accent: #48dbfb;
+            --clr-gray100: #f8f9ff;
+            --clr-gray150: #f0f3ff;
+            --clr-gray200: #e8edff;
+            --clr-gray300: #d6dcf8;
+            --clr-gray400: #767b91;
+            --clr-gray500: #4f546c;
+            --clr-gray600: #2a324b;
+            --clr-gray700: #161d34;
+            --radius: 0.5rem;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            color: var(--clr-gray500);
+            font-size: 0.9rem;
+            background-color: var(--clr-gray100);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background with blueish-purple gradient overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(107, 95, 229, 0.85), rgba(72, 219, 251, 0.8)), 
+                        url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center fixed;
+            background-size: cover;
+            z-index: -1;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            margin: 2rem;
+        }
+
+        .info-content {
+            flex: 1.2;
+            padding: 3rem;
+            background: linear-gradient(135deg, var(--clr-secondary), var(--clr-primary-dark));
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-content::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+
+        .info-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            position: relative;
+            line-height: 1.2;
+        }
+
+        .info-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            font-size: 1.1rem;
+            position: relative;
+            opacity: 0.95;
+        }
+
+        .features {
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .features h3 {
+            margin-bottom: 1.2rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .features li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            font-size: 1.05rem;
+        }
+
+        .features li::before {
+            content: "✓";
+            margin-right: 12px;
+            background: var(--clr-accent);
+            color: var(--clr-gray700);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            position: relative;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius);
+            flex: 1;
+            margin: 0 0.5rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--clr-accent);
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .form-section {
+            flex: 1;
+            padding: 3rem;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-section h2 {
+            color: var(--clr-primary-dark);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            text-align: center;
+            position: relative;
+            font-weight: 700;
+        }
+
+        .form-section h2::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--clr-primary), var(--clr-accent));
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            color: var(--clr-gray600);
+            font-size: 1.05rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--clr-gray300);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--clr-primary);
+            box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--clr-primary), var(--clr-secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            box-shadow: 0 6px 15px rgba(123, 104, 238, 0.3);
+            letter-spacing: 0.5px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, var(--clr-primary-dark), var(--clr-secondary));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(123, 104, 238, 0.4);
+        }
+
+        .chart-container {
+            flex: 1;
+            margin-top: 2rem;
+            min-height: 220px;
+            position: relative;
+        }
+
+        @media (max-width: 1000px) {
+            .info-card {
+                flex-direction: column;
+            }
+            
+            .info-content, .form-section {
+                padding: 2.5rem;
+            }
+            
+            .stats-container {
+                flex-wrap: wrap;
+            }
+            
+            .stat-item {
+                flex-basis: calc(50% - 1rem);
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .info-card {
+                margin: 1rem;
+            }
+            
+            .info-content, .form-section {
+                padding: 2rem 1.5rem;
+            }
+            
+            .stat-item {
+                flex-basis: 100%;
+            }
+            
+            .info-content h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="info-card">
+            <div class="info-content">
+                <h1>Smart Timetable Management System</h1>
+                <p>Streamline your academic scheduling with our intelligent timetable management platform designed for educational institutions of all sizes.</p>
+                
+                <div class="features">
+                    <h3>Key Features:</h3>
+                    <ul>
+                        <li>Automated course scheduling with conflict detection</li>
+                        <li>Smart classroom assignment based on requirements</li>
+                        <li>Support for both tutorials and lab sessions</li>
+                        <li>Customizable time slots and break periods</li>
+                        <li>PDF export functionality for easy sharing</li>
+                        <li>Teacher workload balancing</li>
+                    </ul>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Efficiency Improvement</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Institutions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99%</div>
+                        <div class="stat-label">Satisfaction Rate</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Get Started</h2>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="branch">Branch/Department:</label>
+                        <input type="text" id="branch" name="branch" required placeholder="e.g. Computer Science">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="semester">Semester:</label>
+                        <input type="text" id="semester" name="semester" required placeholder="e.g. 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="year">Academic Year:</label>
+                        <input type="text" id="year" name="year" required placeholder="e.g. 2023-2024">
+                    </div>
+                    
+                    <button type="submit">Create Timetable</button>
+                </form>
+                
+                <div class="chart-container">
+                    <canvas id="usageChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('usageChart').getContext('2d');
+            
+            // Create the chart
+            const usageChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Class Utilization', 'Teacher Allocation', 'Free Time Slots', 'Lab Sessions'],
+                    datasets: [{
+                        data: [45, 30, 15, 10],
+                        backgroundColor: [
+                            'rgba(123, 104, 238, 0.8)',
+                            'rgba(108, 92, 231, 0.8)',
+                            'rgba(72, 219, 251, 0.8)',
+                            'rgba(106, 90, 205, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(123, 104, 238, 1)',
+                            'rgba(108, 92, 231, 1)',
+                            'rgba(72, 219, 251, 1)',
+                            'rgba(106, 90, 205, 1)'
+                        ],
+                        borderWidth: 1.5,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Poppins', sans-serif",
+                                    size: 11
+                                },
+                                color: '#4f546c',
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Timetable Distribution',
+                            font: {
+                                family: "'Poppins', sans-serif",
+                                size: 14,
+                                weight: '600'
+                            },
+                            color: '#4f546c',
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            }
+                        }
+                    },
+                    cutout: '65%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 1500
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

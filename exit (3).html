@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exit</title>
+    <style>
+        /* Background: bright gradient */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffcc70, #ff8177, #84fab0, #8fd3f4);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            color: white;
+        }
+
+        /* Heading styling */
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(90deg, #ff6a00, #ee0979, #00c6ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: fadeIn 2s ease-in-out, textGlow 1.5s infinite alternate;
+        }
+
+        /* Glow animation for text */
+        @keyframes textGlow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #ff0080, 0 0 30px #ff0080; }
+            to { text-shadow: 0 0 20px #fff, 0 0 30px #ff6ec7, 0 0 40px #ff6ec7; }
+        }
+
+        /* Background gradient animation */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Fade-in effect */
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Thank you! All data saved.</h1>
+</body>
+</html>
+

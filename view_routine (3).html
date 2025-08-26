@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Routine</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+            width: 100%;
+        }
+
+        .header-subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1rem;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-buttons {
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: #374151;
+            color: #ffffff;
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+
+        .btn.hidden {
+            display: none;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #ffffff;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+        }
+
+        th {
+            padding: 24px 16px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            position: relative;
+        }
+
+        th:first-child {
+            border-top-left-radius: 20px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 20px;
+        }
+
+        th.day-col {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            font-weight: 800;
+            width: 140px;
+            position: sticky;
+            left: 0;
+            z-index: 10;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 20px;
+        }
+
+        tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 20px;
+        }
+
+        td {
+            padding: 8px;
+            vertical-align: middle;
+            text-align: center;
+            min-height: 100px;
+            position: relative;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .day-col {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+            border-right: 2px solid #e5e7eb;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slot-cell {
+            border-radius: 16px;
+            margin: 6px;
+            padding: 16px 12px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .slot-cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .slot-cell:hover::before {
+            left: 100%;
+        }
+
+        .slot-cell.break {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid #fca5a5;
+            color: #dc2626;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.1);
+        }
+
+        .slot-cell.lab {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 2px solid #93c5fd;
+            color: #1d4ed8;
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.1);
+        }
+
+        .slot-cell.tutorial {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid #6ee7b7;
+            color: #047857;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.1);
+        }
+
+        .slot-cell.free {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 2px solid #cbd5e1;
+            color: #64748b;
+            font-style: italic;
+            box-shadow: 0 4px 15px rgba(100, 116, 139, 0.05);
+        }
+
+        .editable-cell {
+            cursor: pointer;
+        }
+
+        .editable-cell:hover .slot-cell {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-mode .editable-cell .slot-cell {
+            border: 3px dashed #6366f1;
+            animation: glow 2s infinite alternate;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+        }
+
+        @keyframes glow {
+            from { 
+                box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+                transform: scale(1);
+            }
+            to { 
+                box-shadow: 0 0 25px rgba(99, 102, 241, 0.8);
+                transform: scale(1.01);
+            }
+        }
+
+        .edit-dropdown {
+            position: absolute;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            padding: 28px;
+            z-index: 1000;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: none;
+            width: 320px;
+            color: #1f2937;
+            backdrop-filter: blur(20px);
+        }
+
+        .edit-dropdown h3 {
+            margin-bottom: 24px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .dropdown-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .dropdown-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dropdown-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .dropdown-btn:hover::before {
+            left: 100%;
+        }
+
+        .dropdown-btn.save {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+        }
+
+        .dropdown-btn.cancel {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+        }
+
+        .dropdown-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 20px 28px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%) scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .course-name {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+
+        .teacher-name {
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .classroom-name {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 4px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slot-cell.tutorial .course-name::after {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #047857;
+            border-radius: 50%;
+            margin-left: 8px;
+            box-shadow: 0 0 10px rgba(4, 120, 87, 0.3);
+        }
+
+        .slot-cell.lab .course-name::after {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #1d4ed8;
+            border-radius: 50%;
+            margin-left: 8px;
+            box-shadow: 0 0 10px rgba(29, 78, 216, 0.3);
+        }
+
+        /* Time slot alignment improvements */
+        th {
+            min-width: 120px;
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        td {
+            min-width: 120px;
+            max-width: 140px;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 1200px) {
+            th, td {
+                min-width: 100px;
+                max-width: 120px;
+            }
+            
+            .slot-cell {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                border-radius: 16px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            th, td {
+                padding: 8px 4px;
+                min-width: 80px;
+                max-width: 100px;
+            }
+
+            .slot-cell {
+                padding: 8px 6px;
+                min-height: 60px;
+            }
+
+            .edit-dropdown {
+                width: 280px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="width: 100%;">
+                <h1>Course Management</h1>
+                <div class="header-subtitle">{{ branch }} - Semester {{ semester }} - {{ year }}</div>
+            </div>
+        </div>
+
+        <div class="notification success" id="success-notification">Changes saved successfully!</div>
+        <div class="notification error" id="error-notification">Error saving changes. Please try again.</div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('download_routine') }}" class="btn btn-primary">📄 Download PDF</a>
+            <button class="btn btn-warning" id="edit-routine-btn">✏️ Edit Routine</button>
+            <button class="btn btn-success hidden" id="save-routine-btn">💾 Save Changes</button>
+            <button class="btn btn-secondary hidden" id="cancel-edit-btn">❌ Cancel</button>
+            <a href="{{ url_for('time_slots') }}" class="btn btn-primary">⏰ Reassign Slots</a>
+            <a href="{{ url_for('exit_page') }}" class="btn btn-danger">🚪 Finish & Exit</a>
+        </div>
+
+        <div class="card">
+            <div class="table-container">
+                <table id="routine-table">
+                    <thead>
+                        <tr>
+                            <th class="day-col">Day \ Time</th>
+                            {% for slot in slot_labels %}
+                            <th>{{ slot }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in table_rows %}
+                        <tr>
+                            <td class="day-col">{{ row[0] }}</td>
+                            {% for cell in row[1:] %}
+                                <td>
+                                    {% if cell == 'Break' %}
+                                        <div class="slot-cell break" data-slot-type="break">
+                                            <div class="course-name">Break</div>
+                                        </div>
+                                    {% elif cell != 'Free' %}
+                                        {% set parts = cell.split('\n') %}
+                                        <div class="slot-cell {% if '(Lab)' in parts[1] %}lab{% else %}tutorial{% endif %} editable-cell" 
+                                             data-slot-type="{% if '(Lab)' in parts[1] %}lab{% else %}tutorial{% endif %}"
+                                             data-teacher="{{ parts[0] }}"
+                                             data-course="{{ parts[1] }}"
+                                             data-classroom="{% if parts|length > 2 %}{{ parts[2] }}{% endif %}">
+                                            <div class="course-name">{{ parts[1] }}</div>
+                                            <div class="teacher-name">{{ parts[0] }}</div>
+                                            {% if parts|length > 2 %}
+                                                <div class="classroom-name">{{ parts[2] }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <div class="slot-cell free editable-cell" data-slot-type="free">
+                                            <div class="course-name">Free</div>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit dropdown -->
+    <div class="edit-dropdown" id="edit-dropdown">
+        <h3>Edit Time Slot</h3>
+        <div class="form-group">
+            <label>Type:</label>
+            <select id="slot-type">
+                <option value="free">Free</option>
+                <option value="tutorial">Tutorial</option>
+                <option value="lab">Lab</option>
+                <option value="break">Break</option>
+            </select>
+        </div>
+        <div class="form-group" id="teacher-field">
+            <label>Teacher:</label>
+            <input type="text" id="teacher-name" placeholder="Enter teacher name">
+        </div>
+        <div class="form-group" id="course-field">
+            <label>Course:</label>
+            <input type="text" id="course-name" placeholder="Enter course name">
+        </div>
+        <div class="form-group" id="classroom-field">
+            <label>Classroom:</label>
+            <input type="text" id="classroom" placeholder="Enter classroom">
+        </div>
+        <div class="dropdown-actions">
+            <button class="dropdown-btn save" id="dropdown-save">Save</button>
+            <button class="dropdown-btn cancel" id="dropdown-cancel">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editBtn = document.getElementById('edit-routine-btn');
+            const saveBtn = document.getElementById('save-routine-btn');
+            const cancelBtn = document.getElementById('cancel-edit-btn');
+            const dropdown = document.getElementById('edit-dropdown');
+            const dropdownSave = document.getElementById('dropdown-save');
+            const dropdownCancel = document.getElementById('dropdown-cancel');
+            const slotTypeSelect = document.getElementById('slot-type');
+            const teacherField = document.getElementById('teacher-field');
+            const courseField = document.getElementById('course-field');
+            const classroomField = document.getElementById('classroom-field');
+            const successNotification = document.getElementById('success-notification');
+            const errorNotification = document.getElementById('error-notification');
+            
+            let currentCell = null;
+            let originalContent = null;
+            
+            // Show notification
+            function showNotification(element, message) {
+                element.textContent = message;
+                element.style.display = 'block';
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 3000);
+            }
+            
+            // Toggle fields based on slot type
+            function toggleFields() {
+                const type = slotTypeSelect.value;
+                teacherField.style.display = (type === 'tutorial' || type === 'lab') ? 'block' : 'none';
+                courseField.style.display = (type === 'tutorial' || type === 'lab') ? 'block' : 'none';
+                classroomField.style.display = (type === 'tutorial' || type === 'lab') ? 'block' : 'none';
+            }
+            
+            // Enter edit mode
+            editBtn.addEventListener('click', function() {
+                document.body.classList.add('edit-mode');
+                editBtn.classList.add('hidden');
+                saveBtn.classList.remove('hidden');
+                cancelBtn.classList.remove('hidden');
+            });
+            
+            // Cancel edit mode
+            cancelBtn.addEventListener('click', function() {
+                document.body.classList.remove('edit-mode');
+                editBtn.classList.remove('hidden');
+                saveBtn.classList.add('hidden');
+                cancelBtn.classList.add('hidden');
+                dropdown.style.display = 'none';
+                
+                // Restore original content if editing was in progress
+                if (currentCell && originalContent) {
+                    currentCell.innerHTML = originalContent;
+                    const type = currentCell.getAttribute('data-original-type');
+                    if (type) {
+                        currentCell.setAttribute('data-slot-type', type);
+                        currentCell.setAttribute('data-teacher', currentCell.getAttribute('data-original-teacher') || '');
+                        currentCell.setAttribute('data-course', currentCell.getAttribute('data-original-course') || '');
+                        currentCell.setAttribute('data-classroom', currentCell.getAttribute('data-original-classroom') || '');
+                    }
+                }
+            });
+            
+            // Save changes
+            saveBtn.addEventListener('click', function() {
+                document.body.classList.remove('edit-mode');
+                editBtn.classList.remove('hidden');
+                saveBtn.classList.add('hidden');
+                cancelBtn.classList.add('hidden');
+                
+                // Collect all changes
+                const changes = [];
+                const cells = document.querySelectorAll('.editable-cell');
+                
+                cells.forEach(cell => {
+                    const row = cell.closest('tr');
+                    const day = row.firstElementChild.textContent;
+                    const cellIndex = Array.from(row.children).indexOf(cell.parentElement) - 1;
+                    const timeSlot = document.querySelectorAll('th')[cellIndex + 1].textContent;
+                    
+                    changes.push({
+                        day: day,
+                        time: timeSlot,
+                        type: cell.getAttribute('data-slot-type'),
+                        teacher: cell.getAttribute('data-teacher') || '',
+                        course: cell.getAttribute('data-course') || '',
+                        classroom: cell.getAttribute('data-classroom') || ''
+                    });
+                });
+                
+                try {
+                    console.log('Saving changes:', changes);
+                    showNotification(successNotification, 'Routine updated successfully!');
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification(errorNotification, 'Error saving routine changes.');
+                }
+            });
+            
+            // Cell click handler
+            document.querySelectorAll('.editable-cell').forEach(cell => {
+                cell.addEventListener('click', function(e) {
+                    if (!document.body.classList.contains('edit-mode')) return;
+                    
+                    currentCell = this;
+                    originalContent = this.innerHTML;
+                    
+                    // Store original values for cancel
+                    currentCell.setAttribute('data-original-type', this.getAttribute('data-slot-type'));
+                    currentCell.setAttribute('data-original-teacher', this.getAttribute('data-teacher') || '');
+                    currentCell.setAttribute('data-original-course', this.getAttribute('data-course') || '');
+                    currentCell.setAttribute('data-original-classroom', this.getAttribute('data-classroom') || '');
+                    
+                    // Position dropdown near the cell
+                    const rect = this.getBoundingClientRect();
+                    dropdown.style.left = Math.min(rect.left + window.scrollX, window.innerWidth - 340) + 'px';
+                    dropdown.style.top = (rect.bottom + window.scrollY + 10) + 'px';
+                    
+                    // Set current values
+                    const type = this.getAttribute('data-slot-type');
+                    slotTypeSelect.value = type;
+                    
+                    if (type === 'tutorial' || type === 'lab') {
+                        document.getElementById('teacher-name').value = this.getAttribute('data-teacher') || '';
+                        document.getElementById('course-name').value = this.getAttribute('data-course') || '';
+                        document.getElementById('classroom').value = this.getAttribute('data-classroom') || '';
+                    }
+                    
+                    toggleFields();
+                    dropdown.style.display = 'block';
+                    e.stopPropagation();
+                });
+            });
+            
+            // Save from dropdown
+            dropdownSave.addEventListener('click', function() {
+                if (!currentCell) return;
+                
+                const type = slotTypeSelect.value;
+                currentCell.setAttribute('data-slot-type', type);
+                
+                if (type === 'break') {
+                    currentCell.innerHTML = '<div class="course-name">Break</div>';
+                    currentCell.className = 'slot-cell break';
+                    currentCell.removeAttribute('data-teacher');
+                    currentCell.removeAttribute('data-course');
+                    currentCell.removeAttribute('data-classroom');
+                } 
+                else if (type === 'free') {
+                    currentCell.innerHTML = '<div class="course-name">Free</div>';
+                    currentCell.className = 'slot-cell free editable-cell';
+                    currentCell.removeAttribute('data-teacher');
+                    currentCell.removeAttribute('data-course');
+                    currentCell.removeAttribute('data-classroom');
+                }
+                else if (type === 'tutorial' || type === 'lab') {
+                    const teacher = document.getElementById('teacher-name').value;
+                    const course = document.getElementById('course-name').value;
+                    const classroom = document.getElementById('classroom').value;
+                    
+                    currentCell.setAttribute('data-teacher', teacher);
+                    currentCell.setAttribute('data-course', course);
+                    currentCell.setAttribute('data-classroom', classroom);
+                    
+                    currentCell.innerHTML = `
+                        <div class="course-name">${course}</div>
+                        <div class="teacher-name">${teacher}</div>
+                        ${classroom ? '<div class="classroom-name">' + classroom + '</div>' : ''}
+                    `;
+                    
+                    currentCell.className = `slot-cell ${type} editable-cell`;
+                }
+                
+                dropdown.style.display = 'none';
+                currentCell = null;
+                originalContent = null;
+            });
+            
+            // Cancel from dropdown
+            dropdownCancel.addEventListener('click', function() {
+                if (currentCell && originalContent) {
+                    currentCell.innerHTML = originalContent;
+                    const type = currentCell.getAttribute('data-original-type');
+                    if (type) {
+                        currentCell.setAttribute('data-slot-type', type);
+                        currentCell.setAttribute('data-teacher', currentCell.getAttribute('data-original-teacher') || '');
+                        currentCell.setAttribute('data-course', currentCell.getAttribute('data-original-course') || '');
+                        currentCell.setAttribute('data-classroom', currentCell.getAttribute('data-original-classroom') || '');
+                    }
+                }
+                dropdown.style.display = 'none';
+                currentCell = null;
+                originalContent = null;
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (dropdown.style.display === 'block' && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                    if (currentCell && originalContent) {
+                        currentCell.innerHTML = originalContent;
+                        const type = currentCell.getAttribute('data-original-type');
+                        if (type) {
+                            currentCell.setAttribute('data-slot-type', type);
+                            currentCell.setAttribute('data-teacher', currentCell.getAttribute('data-original-teacher') || '');
+                            currentCell.setAttribute('data-course', currentCell.getAttribute('data-original-course') || '');
+                            currentCell.setAttribute('data-classroom', currentCell.getAttribute('data-original-classroom') || '');
+                        }
+                    }
+                    currentCell = null;
+                    originalContent = null;
+                }
+            });
+            
+            // Toggle fields when slot type changes
+            slotTypeSelect.addEventListener('change', toggleFields);
+            
+            // Initial field toggle
+            toggleFields();
+        });
+    </script>
+</body>
+</html>

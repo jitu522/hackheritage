@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Course List</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Color variables */
+        :root {
+            --clr-primary: #4a90e2;
+            --clr-primary-light: #e3f2fd;
+            --clr-primary-dark: #357abd;
+            --clr-gray100: #f9fbff;
+            --clr-gray150: #f4f6fb;
+            --clr-gray200: #eef1f6;
+            --clr-gray300: #e1e5ee;
+            --clr-gray400: #767b91;
+            --clr-gray500: #4f546c;
+            --clr-gray600: #2a324b;
+            --clr-gray700: #161d34;
+            --clr-active: #c8e6c9;
+            --clr-active-font: #388e3c;
+            --clr-optional: #fff0c2;
+            --clr-optional-font: #a68b00;
+            --clr-link: #2962ff;
+            --radius: 0.3rem;
+            --shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Mukta', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--clr-gray500);
+            font-size: 0.9rem;
+            background: linear-gradient(135deg, #fdfbfb, #ebedee, #e3f2fd, #fce4ec);
+            background-attachment: fixed;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: slideInDown 0.6s ease-out;
+        }
+
+        h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--clr-gray700);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--clr-gray700), var(--clr-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--clr-gray400);
+            font-weight: 500;
+        }
+
+        .table-container {
+            width: 100%;
+            max-width: 1200px;
+            animation: slideInUp 0.8s ease-out;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: var(--shadow);
+            background-color: white;
+            text-align: left;
+            overflow: hidden;
+            border-radius: var(--radius);
+            position: relative;
+        }
+
+        thead {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        th {
+            padding: 1.2rem 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            font-size: 0.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--clr-gray700), var(--clr-gray600));
+            color: white;
+            position: relative;
+        }
+
+        th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-dark));
+        }
+
+        td {
+            padding: 1.2rem 1.5rem;
+            font-weight: 500;
+            border-bottom: 1px solid var(--clr-gray200);
+            transition: all 0.3s ease;
+        }
+
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background-color: var(--clr-primary-light);
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(74,144,226,0.15);
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--clr-gray150);
+        }
+
+        tr:nth-child(even):hover {
+            background-color: var(--clr-primary-light);
+        }
+
+        .course-code {
+            font-family: 'Inter', monospace;
+            font-weight: 600;
+            color: var(--clr-primary);
+            background: rgba(74,144,226,0.1);
+            padding: 0.3rem 0.6rem;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+        }
+
+        .teacher-name {
+            font-weight: 600;
+            color: var(--clr-gray600);
+        }
+
+        .course-name {
+            font-weight: 500;
+            color: var(--clr-gray500);
+        }
+
+        .duration-badge {
+            border-radius: var(--radius);
+            padding: 0.3rem 0.8rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-block;
+            min-width: 60px;
+        }
+
+        .duration-active {
+            background-color: var(--clr-active);
+            color: var(--clr-active-font);
+        }
+
+        .duration-none {
+            background-color: var(--clr-optional);
+            color: var(--clr-optional-font);
+        }
+
+        .count-badge {
+            background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+            color: white;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin: 0 auto;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(74,144,226,0.3);
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(74,144,226,0.4);
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button:active {
+            transform: translateY(0) scale(1);
+        }
+
+        .button-container {
+            text-align: center;
+            animation: slideInUp 1s ease-out;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            th, td {
+                padding: 0.8rem 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            th {
+                font-size: 0.7rem;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 800px;
+            }
+        }
+
+        /* Loading animation for empty state */
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--clr-gray400);
+        }
+
+        .loading-dots {
+            display: inline-flex;
+            gap: 0.3rem;
+        }
+
+        .loading-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background: var(--clr-primary);
+            border-radius: 50%;
+            animation: loadingDots 1.4s ease-in-out infinite both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes loadingDots {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Course Management</h2>
+        <p class="subtitle">{{ branch }} - Semester {{ semester }} - {{ year }}</p>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Teacher</th>
+                    <th>Course</th>
+                    <th>Code</th>
+                    <th>Tutorial</th>
+                    <th>Tut/Week</th>
+                    <th>Lab</th>
+                    <th>Lab/Week</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in courses %}
+                <tr>
+                    <td class="teacher-name">{{ row[0] }}</td>
+                    <td class="course-name">{{ row[1] }}</td>
+                    <td><span class="course-code">{{ row[2] }}</span></td>
+                    <td>
+                        {% if row[3] %}
+                            <span class="duration-badge duration-active">{{ row[3] }}</span>
+                        {% else %}
+                            <span class="duration-badge duration-none">None</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="count-badge">{{ row[5] }}</span>
+                    </td>
+                    <td>
+                        {% if row[4] %}
+                            <span class="duration-badge duration-active">{{ row[4] }}</span>
+                        {% else %}
+                            <span class="duration-badge duration-none">None</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="count-badge">{{ row[6] }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+                {% if not courses %}
+                <tr>
+                    <td colspan="7" class="loading-state">
+                        <div>No courses added yet</div>
+                        <div class="loading-dots">
+                            <div class="loading-dot"></div>
+                            <div class="loading-dot"></div>
+                            <div class="loading-dot"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="button-container">
+        <a href="{{ url_for('time_slots') }}">
+            <button class="action-button">Next → Create Time Slots</button>
+        </a>
+    </div>
+</body>
+</html>

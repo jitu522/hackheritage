@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Assignment</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0e6ff 0%, #e6f0ff 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #818cf8;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            color: #a78bfa;
+        }
+
+        .input-icon input {
+            padding-left: 40px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #a78bfa;
+            outline: none;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(167, 139, 250, 0.25);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(167, 139, 250, 0.35);
+        }
+
+        .error {
+            color: #d32f2f;
+            margin-bottom: 20px;
+            padding: 12px;
+            background-color: #ffebee;
+            border-radius: 8px;
+            border-left: 5px solid #d32f2f;
+            font-weight: 500;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
+            color: #fff;
+            text-align: center;
+            font-size: 14px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 20px;
+            }
+            
+            .dashboard-header {
+                padding: 20px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Classroom Assignment</h1>
+        </div>
+        
+        <div class="form-container">
+            {% if error %}
+                <div class="error">
+                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                </div>
+            {% endif %}
+            
+            <form method="POST">
+                <div class="form-group">
+                    <label for="tutorial_rooms"><i class="fas fa-book-open"></i> Tutorial Classrooms (comma separated):</label>
+                    <div class="input-icon">
+                        <i class=""></i>
+                        <input type="text" id="tutorial_rooms" name="tutorial_rooms" placeholder="e.g., CB101, CB102, CB201" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lab_rooms"><i class="fas fa-flask"></i> Lab Classrooms (comma separated):</label>
+                    <div class="input-icon">
+                        <i class=""></i>
+                        <input type="text" id="lab_rooms" name="lab_rooms" placeholder="e.g., LAB1, LAB2, LAB3" required>
+                    </div>
+                </div>
+                
+                <button type="submit"><i class="fas fa-tasks"></i> Assign Classrooms</button>
+            </form>
+        </div>
+        
+        <footer>
+            © 2025 All rights reserved. Classroom Management System
+        </footer>
+    </div>
+</body>
+</html>

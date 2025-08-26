@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Time Slot Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .session-info {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .info-chip {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input {
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: #fff;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        select:focus, input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        select:hover, input:hover {
+            border-color: #cbd5e0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f7fafc;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #2d3748;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .session-info {
+                flex-direction: column;
+            }
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: -2s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: -4s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: -1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Academic Time Slot Management</h1>
+            <p style="color: #718096; margin-top: 5px;">Create and manage routine time slots for your academic schedule</p>
+            
+            <div class="session-info">
+                <div class="info-chip">📚 {{ session.get('branch', '') }}</div>
+                <div class="info-chip">📅 Semester {{ session.get('semester', '') }}</div>
+                <div class="info-chip">🗓️ {{ session.get('year', '') }}</div>
+
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="form-container">
+                <div class="form-title">
+                    <div class="icon">⚙️</div>
+                    Configuration Settings
+                </div>
+
+                <form method="POST" id="slotForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>College Day Start</label>
+                            <select name="start_day" id="start_day" required>
+                                <option value="">Select Day</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>College Day End</label>
+                            <select name="end_day" id="end_day" required>
+                                <option value="">Select Day</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="time" name="start_time" id="start_time" required value="09:00">
+                        </div>
+
+                        <div class="form-group">
+                            <label>End Time</label>
+                            <input type="time" name="end_time" id="end_time" required value="17:00">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Slot Duration (minutes)</label>
+                            <input type="number" name="slot_duration" id="slot_duration" min="15" max="240" required value="60">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Break Start</label>
+                            <input type="time" name="break_start" id="break_start" required value="12:00">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Break End</label>
+                            <input type="time" name="break_end" id="break_end" required value="13:00">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        ✨ Generate Time Slots
+                    </button>
+                </form>
+            </div>
+
+            <div class="sidebar">
+                <div class="stats-card">
+                    <h3>📊 Schedule Overview</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Days</span>
+                        <span class="stat-value" id="total-days">5 days</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Daily Hours</span>
+                        <span class="stat-value" id="daily-hours">8 hours</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Slots per Day</span>
+                        <span class="stat-value" id="slots-per-day">7 slots</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Slots</span>
+                        <span class="stat-value" id="total-slots">35 slots</span>
+                    </div>
+                </div>
+
+                <div class="stats-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border: 1px solid rgba(102, 126, 234, 0.2);">
+                    <h3 style="color: #667eea;">💡 Quick Tips</h3>
+                    <div style="color: #4a5568; font-size: 0.9rem; line-height: 1.6;">
+                        <p style="margin-bottom: 10px;">• Set realistic slot durations</p>
+                        <p style="margin-bottom: 10px;">• Include adequate break times</p>
+                        <p style="margin-bottom: 10px;">• Consider peak productivity hours</p>
+                        <p>• Allow buffer time between slots</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Days of the week for calculation
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        
+        // Function to calculate number of days between two days of the week
+        function calculateDaysBetween(startDay, endDay) {
+            const startIndex = daysOfWeek.indexOf(startDay);
+            const endIndex = daysOfWeek.indexOf(endDay);
+            
+            if (startIndex === -1 || endIndex === -1) return 0;
+            
+            if (endIndex >= startIndex) {
+                return endIndex - startIndex + 1;
+            } else {
+                return 7 - startIndex + endIndex + 1;
+            }
+        }
+        
+        // Function to calculate time difference in hours
+        function calculateTimeDifference(startTime, endTime) {
+            const start = new Date(`2000-01-01T${startTime}`);
+            const end = new Date(`2000-01-01T${endTime}`);
+            
+            // If end time is earlier than start time, assume it's the next day
+            if (end < start) {
+                end.setDate(end.getDate() + 1);
+            }
+            
+            const diffMs = end - start;
+            return diffMs / (1000 * 60 * 60); // Convert to hours
+        }
+        
+        // Function to calculate slots per day
+        function calculateSlotsPerDay(startTime, endTime, breakStart, breakEnd, slotDuration) {
+            // Calculate total working hours
+            const morningHours = calculateTimeDifference(startTime, breakStart);
+            const afternoonHours = calculateTimeDifference(breakEnd, endTime);
+            const totalHours = morningHours + afternoonHours;
+            
+            // Calculate slots
+            return Math.floor(totalHours * 60 / slotDuration);
+        }
+        
+        // Function to update the schedule overview
+        function updateScheduleOverview() {
+            const startDay = document.getElementById('start_day').value;
+            const endDay = document.getElementById('end_day').value;
+            const startTime = document.getElementById('start_time').value;
+            const endTime = document.getElementById('end_time').value;
+            const breakStart = document.getElementById('break_start').value;
+            const breakEnd = document.getElementById('break_end').value;
+            const slotDuration = parseInt(document.getElementById('slot_duration').value) || 60;
+            
+            // Only update if all required fields have values
+            if (startDay && endDay && startTime && endTime && breakStart && breakEnd && slotDuration) {
+                // Calculate values
+                const totalDays = calculateDaysBetween(startDay, endDay);
+                const dailyHours = calculateTimeDifference(startTime, endTime) - calculateTimeDifference(breakStart, breakEnd);
+                const slotsPerDay = calculateSlotsPerDay(startTime, endTime, breakStart, breakEnd, slotDuration);
+                const totalSlots = totalDays * slotsPerDay;
+                
+                // Update the DOM
+                document.getElementById('total-days').textContent = `${totalDays} days`;
+                document.getElementById('daily-hours').textContent = `${dailyHours.toFixed(1)} hours`;
+                document.getElementById('slots-per-day').textContent = `${slotsPerDay} slots`;
+                document.getElementById('total-slots').textContent = `${totalSlots} slots`;
+            } else {
+                // Reset values if any field is empty
+                document.getElementById('total-days').textContent = '0 days';
+                document.getElementById('daily-hours').textContent = '0 hours';
+                document.getElementById('slots-per-day').textContent = '0 slots';
+                document.getElementById('total-slots').textContent = '0 slots';
+            }
+        }
+        
+        // Add event listeners to all form inputs
+        document.querySelectorAll('#slotForm input, #slotForm select').forEach(element => {
+            element.addEventListener('change', updateScheduleOverview);
+            element.addEventListener('input', updateScheduleOverview);
+        });
+        
+        // Initialize with default values
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default selections
+            document.getElementById('start_day').value = 'Monday';
+            document.getElementById('end_day').value = 'Friday';
+            
+            // Trigger the update
+            updateScheduleOverview();
+            
+            // Add some interactivity
+            document.querySelectorAll('input, select').forEach(element => {
+                element.addEventListener('focus', function() {
+                    this.closest('.form-group').style.transform = 'scale(1.02)';
+                    this.closest('.form-group').style.transition = 'transform 0.2s ease';
+                });
+
+                element.addEventListener('blur', function() {
+                    this.closest('.form-group').style.transform = 'scale(1)';
+                });
+            });
+        });
+        
+        // Allow form submission to proceed normally
+        document.getElementById('slotForm').addEventListener('submit', function(e) {
+            console.log('Form submitted - proceeding to next page');
+            // Form will submit normally without prevention
+        });
+    </script>
+</body>
+</html>
